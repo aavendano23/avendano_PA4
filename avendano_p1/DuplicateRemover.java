@@ -3,23 +3,50 @@ import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.io.FileOutputStream;
 import java.util.Scanner;
+import java.io.IOException;
 
 public class DuplicateRemover {
 
   HashSet<String> uniqueWords = new HashSet<String>();
 
-  public void remove (Scanner dataFile) {
-    // read in data fileRead
-     while (dataFile.hasNextLine()) {
-       uniqueWords.add(dataFile.nextLine());
-     }
+  public void remove (FileInputStream dataFile) {
+    Scanner inFS = null;
+
+    try {
+      dataFile = new FileInputStream("problem1.txt");
+      inFS = new Scanner(dataFile);
+
+      while (inFS.hasNextLine()) {
+        uniqueWords.add(inFS.nextLine());
+      }
+
+      dataFile.close();
+    }
+    catch (IOException except) {
+      System.out.println("IOException: " + except.getMessage());
+    }
   }
 
-  public void write (PrintWriter outputFile) {
-    System.out.println("\nIn write method\n" + uniqueWords);
-    for (String words : uniqueWords) {
-      outputFile.println(words);
+  public void write (FileOutputStream outputFile) {
+    PrintWriter outFS = null;
+
+    try {
+      outputFile = new FileOutputStream("unique_words.txt");
+      outFS = new PrintWriter(outputFile);
+
+      for (String words : uniqueWords) {
+        outFS.println(words);
+      }
+
+      if (outFS.checkError() == true) {
+        System.out.println("An error has occurred");
+      }
+
+      outFS.flush();
+      outputFile.close();
     }
-    outputFile.flush();
+    catch (IOException except) {
+      System.out.println("IOException: " + except.getMessage());
+    }
   }
 }
