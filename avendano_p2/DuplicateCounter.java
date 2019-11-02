@@ -1,39 +1,56 @@
 import java.util.HashMap;
-import java.io.FileInputStream;
 import java.io.PrintWriter;
-import java.io.FileOutputStream;
 import java.util.Scanner;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class DuplicateCounter {
 
   HashMap<String, Integer> wordCounter = new HashMap<>();
 
-  public void count (Scanner dataFile) {
+  public void count (FileInputStream dataFile) {
     String str;
+    Scanner inFS = null;
 
-    while (dataFile.hasNextLine()) {
+    try {
+      dataFile = new FileInputStream("problem2.txt");
+      inFS = new Scanner(dataFile);
 
-      str = dataFile.nextLine();
-      if (wordCounter.containsKey(str)) {
-        wordCounter.put(str, wordCounter.get(str) + 1);
-        continue;
-      }
-       wordCounter.putIfAbsent(str, 1);
-     }
+      while (inFS.hasNextLine()) {
 
-     //System.out.println("keys: " + wordCounter.keySet());
-     //System.out.println("values: " + wordCounter.values());
-
-  }
-
-  public void write(PrintWriter outputFile) {
-    //outputFile.println()
-
-    for (String key: wordCounter.keySet()) {
-      outputFile.println(key + " " + wordCounter.get(key));
-      outputFile.flush();
+        str = inFS.nextLine();
+        if (wordCounter.containsKey(str)) {
+          wordCounter.put(str, wordCounter.get(str) + 1);
+          continue;
+        }
+         wordCounter.putIfAbsent(str, 1);
+       }
+       dataFile.close();
     }
-
+   catch (IOException except) {
+      System.out.println("IOException: " + except.getMessage());
+    }
   }
 
+  public void write(FileOutputStream outputFile) {
+    PrintWriter outFS = null;
+
+    try {
+      outputFile = new FileOutputStream("unique_word_counts.txt");
+      outFS = new PrintWriter(outputFile);
+
+      for (String key: wordCounter.keySet()) {
+        outFS.println(key + " " + wordCounter.get(key));
+        outFS.flush();
+      }
+      if (outFS.checkError() == true) {
+        System.out.println("An error has occurred");
+      }
+      outputFile.close();
+    }
+   catch (IOException except) {
+      System.out.println("IOException: " + except.getMessage());
+    }
+  }
 }
